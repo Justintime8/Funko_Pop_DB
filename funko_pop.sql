@@ -1,43 +1,14 @@
--- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3307
--- Generation Time: Oct 21, 2020 at 09:07 PM
--- Server version: 5.7.24-log
--- PHP Version: 7.2.10
+CREATE DATABASE Funko_Pop DEFAULT CHARACTER SET utf8;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
+USE Funko_Pop;
+
+CREATE TABLE brand (
+  brand_id INTEGER NOT NULL PRIMARY KEY,
+  brand_name VARCHAR(255)
+) ENGINE=InnoDB;
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `funko_pop`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `brand`
---
-
-CREATE TABLE `brand` (
-  `brand_id` int(11) NOT NULL,
-  `brand_name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `brand`
---
-
-INSERT INTO `brand` (`brand_id`, `brand_name`) VALUES
+INSERT INTO brand (brand_id, brand_name) VALUES
 (1, 'Action Figure'),
 (2, 'Dorbz Ridez'),
 (3, 'Funko Branded'),
@@ -59,22 +30,14 @@ INSERT INTO `brand` (`brand_id`, `brand_name`) VALUES
 (19, 'Pop Town'),
 (20, 'Funko Accessories-Other');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `category`
---
+CREATE TABLE category (
+  Category_id INTEGER NOT NULL PRIMARY KEY,
+  category_name VARCHAR(255)
+) ENGINE=InnoDB;
 
-CREATE TABLE `category` (
-  `Category_id` int(11) NOT NULL,
-  `category_name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `category`
---
-
-INSERT INTO `category` (`Category_id`, `category_name`) VALUES
+INSERT INTO category (Category_id, category_name) VALUES
 (1, 'Animation'),
 (2, 'Heroes'),
 (3, 'Movies'),
@@ -84,22 +47,14 @@ INSERT INTO `category` (`Category_id`, `category_name`) VALUES
 (7, 'Television'),
 (8, 'Video Games');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `exclusive`
---
+CREATE TABLE exclusive (
+  exclusive_id INTEGER NOT NULL PRIMARY KEY,
+  store_name VARCHAR(255)
+) ENGINE=InnoDB;
 
-CREATE TABLE `exclusive` (
-  `exclusive_id` int(11) NOT NULL,
-  `store_name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `exclusive`
---
-
-INSERT INTO `exclusive` (`exclusive_id`, `store_name`) VALUES
+INSERT INTO exclusive (exclusive_id, store_name) VALUES
 (1, 'Barnes & Noble'),
 (2, 'Books a Million'),
 (3, 'Box Lunch'),
@@ -120,28 +75,27 @@ INSERT INTO `exclusive` (`exclusive_id`, `store_name`) VALUES
 (18, 'Wonder Con'),
 (19, 'Other');
 
--- --------------------------------------------------------
 
---
--- Table structure for table `figure`
---
+CREATE TABLE figure (
+  figure_number INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  figure_id INTEGER NOT NULL,
+  name VARCHAR(255),
+  year INTEGER NOT NULL,
+  company VARCHAR(255),
+  brand_id INTEGER NOT NULL,
+  category_id INTEGER NOT NULL,
+  exclusive_id INTEGER NOT NULL,
+  INDEX USING BTREE (figure_id),
+  INDEX USING BTREE (brand_id),
+  INDEX USING BTREE (category_id),
+  INDEX USING BTREE (exclusive_id),
+  CONSTRAINT FOREIGN KEY (category_id) REFERENCES category (Category_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (exclusive_id) REFERENCES exclusive (exclusive_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FOREIGN KEY (brand_id) REFERENCES brand (brand_id) ON DELETE CASCADE ON UPDATE CASCADE  
+) ENGINE=InnoDB;
 
-CREATE TABLE `figure` (
-  `figure_number` int(11) NOT NULL,
-  `figure_id` int(11) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `year` int(11) NOT NULL,
-  `company` varchar(255) DEFAULT NULL,
-  `brand_id` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `exclusive_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `figure`
---
-
-INSERT INTO `figure` (`figure_number`, `figure_id`, `name`, `year`, `company`, `brand_id`, `category_id`, `exclusive_id`) VALUES
+INSERT INTO figure (figure_number, figure_id, name, year, company, brand_id, category_id, exclusive_id) VALUES
 (1, 1, 'Greg Junko', 2015, '21 Jump Street', 7, 3, 19),
 (2, 2, 'Ickis', 2017, 'AAAHHH!!! Real Monsters', 7, 7, 12),
 (3, 3, 'Chester Cheetah (t-shirt)', 2020, 'AD ICONS', 7, 5, 15),
@@ -321,63 +275,3 @@ INSERT INTO `figure` (`figure_number`, `figure_id`, `name`, `year`, `company`, `
 (177, 86, 'Razor Ramon', 2017, 'WWE', 7, 6, 19),
 (178, 86, 'Bret Hart', 2019, 'WWE', 7, 6, 19),
 (179, 86, 'Undertaker', 2019, 'WWE', 7, 6, 19);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `brand`
---
-ALTER TABLE `brand`
-  ADD PRIMARY KEY (`brand_id`);
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`Category_id`),
-  ADD KEY `category_name` (`category_name`) USING BTREE;
-
---
--- Indexes for table `exclusive`
---
-ALTER TABLE `exclusive`
-  ADD PRIMARY KEY (`exclusive_id`);
-
---
--- Indexes for table `figure`
---
-ALTER TABLE `figure`
-  ADD PRIMARY KEY (`figure_number`),
-  ADD KEY `name` (`name`) USING BTREE,
-  ADD KEY `category_id` (`category_id`),
-  ADD KEY `exclusive_id` (`exclusive_id`),
-  ADD KEY `brand_id` (`brand_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `figure`
---
-ALTER TABLE `figure`
-  MODIFY `figure_number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=180;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `figure`
---
-ALTER TABLE `figure`
-  ADD CONSTRAINT `figure_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`Category_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `figure_ibfk_2` FOREIGN KEY (`exclusive_id`) REFERENCES `exclusive` (`exclusive_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `figure_ibfk_3` FOREIGN KEY (`brand_id`) REFERENCES `brand` (`brand_id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
